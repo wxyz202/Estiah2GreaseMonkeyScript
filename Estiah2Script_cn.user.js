@@ -47,7 +47,7 @@ init_deck = function(){
         JQ(".deck-floater .deck-clear").click();
 
         var deck_text = JQ("#estiah2-script-deck-textarea").val().trim();
-        if (/^(\d+(,\d+)*)?\|(\d+x\d(,\d+x\d)*)?$/.test(deck_text)) {
+        if (/^(\d+(,\d+)*)\|(\d+x\d(,\d+x\d)*)$/.test(deck_text)) {
             var scard_text = deck_text.split("|")[0];
             var scard_list = scard_text.split(",");
             if(!function(){
@@ -55,7 +55,7 @@ init_deck = function(){
                     var scard = scard_list[i];
                     var found = false;
                     var element = JQ(".dataview .dataview-content .scard[data-id='" + scard + "']");
-                    if (element) {
+                    if (element.length) {
                         element.find(".add-scard").click();
                         found = true;
                     }
@@ -77,7 +77,7 @@ init_deck = function(){
                     var count = card_list[i].split("x")[1];
                     var found = false;
                     var element = JQ(".dataview .dataview-content .card[data-id='" + card + "']");
-                    if (element) {
+                    if (element.length) {
                         var max_count = element.find(".count").text().slice(-1);
                         if (parseInt(count) > parseInt(max_count)) {
                             JQ("#estiah2-script-deck-info").text("卡" + card + "超过上限");
@@ -90,7 +90,7 @@ init_deck = function(){
                         }
                     }
                     if (!found) {
-                        JQ("#estiah2-script-deck-info").text("卡" + scard + "没找到");
+                        JQ("#estiah2-script-deck-info").text("卡" + card + "没找到");
                         return false;
                     }
                 }

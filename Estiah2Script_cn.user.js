@@ -26,17 +26,17 @@ init_deck = function(){
         JQ(".deck-floater .deck-scards .scard").each(function(index, element){
             scard_list.push(JQ(element).attr("data-id"));
         });
-        var scard_text = scard_list.join(",");
 
-        var card_list = [];
+        var card_list = {};
         JQ(".deck-floater .deck-cards .card").each(function(index, element){
             var card_id = JQ(element).attr("data-id");
             var card_count = JQ(element).find(".count").text();
-            card_list.push(card_id + "x" + card_count);
+            card_list[card_id] = card_count;
         });
-        var card_text = card_list.join(",");
 
-        JQ("#estiah2-script-deck-textarea").val(scard_text + "|" + card_text);
+        var deck_text = JSON.stringify({"scards": scard_list, "cards": card_list});
+
+        JQ("#estiah2-script-deck-textarea").val(deck_text);
 
         JQ("#estiah2-script-deck-info").text("导出成功");
     });
@@ -47,61 +47,61 @@ init_deck = function(){
         JQ(".deck-floater .deck-clear").click();
 
         var deck_text = JQ("#estiah2-script-deck-textarea").val().trim();
-        if (/^(\d+(,\d+)*)\|(\d+x\d(,\d+x\d)*)$/.test(deck_text)) {
-            var scard_text = deck_text.split("|")[0];
-            var scard_list = scard_text.split(",");
-            if(!function(){
-                for (var i in scard_list) {
-                    var scard = scard_list[i];
-                    var found = false;
-                    var element = JQ(".dataview .dataview-content .scard[data-id='" + scard + "']");
-                    if (element.length) {
-                        element.find(".add-scard").click();
-                        found = true;
-                    }
-                    if (!found) {
-                        JQ("#estiah2-script-deck-info").text("资源" + scard + "没找到");
-                        return false;
-                    }
-                }
-                return true;
-            }()) {
-                return;
-            }
-
-            var card_text = deck_text.split("|")[1];
-            var card_list = card_text.split(",");
-            if(!function(){
-                for (var i in card_list) {
-                    var card = card_list[i].split("x")[0];
-                    var count = card_list[i].split("x")[1];
-                    var found = false;
-                    var element = JQ(".dataview .dataview-content .card[data-id='" + card + "']");
-                    if (element.length) {
-                        var max_count = element.find(".count").text().slice(-1);
-                        if (parseInt(count) > parseInt(max_count)) {
-                            JQ("#estiah2-script-deck-info").text("卡" + card + "超过上限");
-                            return false;
-                        } else {
-                            for (var j = parseInt(count); j > 0; j--){
-                                element.find(".add-card").click();
-                            }
-                            found = true;
-                        }
-                    }
-                    if (!found) {
-                        JQ("#estiah2-script-deck-info").text("卡" + card + "没找到");
-                        return false;
-                    }
-                }
-                return true;
-            }()) {
-                return;
-            }
-            JQ("#estiah2-script-deck-info").text("导入成功");
-        } else {
+        var deck;
+        try {
+            deck = JSON.parse(deck_text);
+        } catch (e) {
             JQ("#estiah2-script-deck-info").text("装备解析错误");
         }
+
+        var scard_list = deck["scards"];
+        if(!function(){
+            for (var i in scard_list) {
+                var scard = scard_list[i];
+                var found = false;
+                var element = JQ(".dataview .dataview-content .scard[data-id='" + scard + "']");
+                if (element.length) {
+                    element.find(".add-scard").click();
+                    found = true;
+                }
+                if (!found) {
+                    JQ("#estiah2-script-deck-info").text("资源" + scard + "没找到");
+                    return false;
+                }
+            }
+            return true;
+        }()) {
+            return;
+        }
+
+        var card_list = deck["cards"];
+        if(!function(){
+            for (var card in card_list) {
+                var count = card_list[card];
+                var found = false;
+                var element = JQ(".dataview .dataview-content .card[data-id='" + card + "']");
+                if (element.length) {
+                    var max_count = element.find(".count").text().slice(-1);
+                    if (parseInt(count) > parseInt(max_count)) {
+                        JQ("#estiah2-script-deck-info").text("卡" + card + "超过上限");
+                        return false;
+                    } else {
+                        for (var j = parseInt(count); j > 0; j--){
+                            element.find(".add-card").click();
+                        }
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    JQ("#estiah2-script-deck-info").text("卡" + card + "没找到");
+                    return false;
+                }
+            }
+            return true;
+        }()) {
+            return;
+        }
+        JQ("#estiah2-script-deck-info").text("导入成功");
     });
 };
 

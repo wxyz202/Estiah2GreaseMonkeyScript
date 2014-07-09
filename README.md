@@ -1,9 +1,11 @@
 Estiah2 GreaseMonkey Script
 =========================
 
-the grease monkey script for Esitah
+the grease monkey script for Esitah2
 
 现在暂时只支持中文版，地址：[http://cn.estiah2.com/zh/](http://cn.estiah2.com/zh/)
+
+关于chrome插件，可以访问[这里](https://github.com/litexavier/E2ChromeExtension)。
 
 ###用法
 
@@ -12,4 +14,4 @@ the grease monkey script for Esitah
 
 ###功能列表：
 
-* 卡组导入及导出
+* 卡组导入及导出(与chrome版的共通)

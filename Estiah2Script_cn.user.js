@@ -19,6 +19,8 @@ init_deck = function(){
     count100.click();
     window.scrollTo(0, 0);
 
+    JQ(".dataview .dataview-footbar").hide();
+
     JQ("#estiah2-script-deck-export").click(function(){
         JQ("#estiah2-script-deck-info").text("正在导出");
 

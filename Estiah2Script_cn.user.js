@@ -137,8 +137,37 @@ var Deck = new PageHandler(/^\/zh\/character\/deck/, function(){
     extra_gear_init();
 });
 
+// inventory
+var Inventory = new PageHandler(/^\/zh\/character\/inventory/, function(){
+    var sell_common_item_init = function(){
+        JQ(".s-cr2z1 .s-title").append(JQ("<span style='border-style:solid;border-width:1px;border-color:#497ea0;font-size:16px'><span style='padding:0 10px;height:20px;color:#8dd2ff;cursor:pointer;' id='estiah2-script-inventory-sell-common'>出售所有普通物品</span></span>"));
+        JQ("#estiah2-script-inventory-sell-common").click(function(){
+            var common_item_list = [];
+            JQ(".s-cr2z1 .s-item .rarity-common").parent().each(function(index){
+                common_item_list.push(JQ(this).attr("data-uid"));
+            });
+            var current_index = common_item_list.length - 1;
+            var sell_item = function(item_id){
+                JQ(".s-cr2z1 .s-item[data-uid=\"" + item_id + "\"]").click();
+            };
+            var f = function(){
+                sell_item(common_item_list[current_index]);
+                if (current_index > 0) {
+                    current_index--;
+                    window.setTimeout(function(){
+                        f();
+                    }, 2000);
+                }
+            };
+            f();
+        });
+    };
+
+    sell_common_item_init();
+});
+
 // function list
-var function_list = [Deck];
+var function_list = [Deck, Inventory];
 
 
 JQ(document).ready(function(){

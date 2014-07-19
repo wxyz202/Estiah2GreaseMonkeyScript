@@ -4,7 +4,7 @@
 // @description the greasemonkey script for estiah2
 // @include     http://cn.estiah2.com/zh/*
 // @include     http://www.estiah2.com/zh/*
-// @version     0.1
+// @version     0.2
 // @grant       none
 // @require     http://code.jquery.com/jquery-1.11.0.min.js
 // ==/UserScript==

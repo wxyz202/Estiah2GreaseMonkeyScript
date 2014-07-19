@@ -147,17 +147,26 @@ var Inventory = new PageHandler(/^\/zh\/character\/inventory/, function(){
                 common_item_list.push(JQ(this).attr("data-uid"));
             });
             var current_index = common_item_list.length - 1;
-            var sell_item = function(item_id){
-                JQ(".s-cr2z1 .s-item[data-uid=\"" + item_id + "\"]").click();
+            var sell_item = function(item_id, callback){
+                var item_element = JQ(".s-cr2z1 .s-item[data-uid=\"" + item_id + "\"]");
+                item_element.get(0).dispatchEvent(new MouseEvent("mouseover"));
+                item_element.click();
+                item_element.get(0).dispatchEvent(new MouseEvent("mouseout"));
+                window.setTimeout(function(){
+                    JQ(".s-cr2z2 .s-floater .locked-false .numeric-updown .numeric-set").click();
+                    JQ(".s-cr2z2 .s-floater .locked-false .sell-form .ajaxform-submit").click();
+                    callback();
+                }, 500);
             };
             var f = function(){
-                sell_item(common_item_list[current_index]);
-                if (current_index > 0) {
-                    current_index--;
-                    window.setTimeout(function(){
-                        f();
-                    }, 2000);
-                }
+                sell_item(common_item_list[current_index], function(){
+                    if (current_index > 0) {
+                        current_index--;
+                        window.setTimeout(function(){
+                            f();
+                        }, 2500);
+                    }
+                });
             };
             f();
         });

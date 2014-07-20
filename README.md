@@ -15,4 +15,4 @@ the grease monkey script for Esitah2
 ### 功能列表：
 
 * 卡组导入及导出(与chrome版的共通, v0.1)
-* 在行囊中出售所有物品(v0.2)
+* 在行囊中出售所有普通物品(v0.2)

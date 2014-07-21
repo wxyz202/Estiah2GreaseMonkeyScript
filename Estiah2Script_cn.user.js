@@ -5,7 +5,7 @@
 // @include     http://cn.estiah2.com/zh/*
 // @include     http://www.estiah2.com/zh/*
 // @version     0.2
-// @grant       none
+// @grant       GM_xmlhttpRequest
 // @require     http://code.jquery.com/jquery-1.11.0.min.js
 // ==/UserScript==
 
@@ -134,7 +134,42 @@ var Deck = new PageHandler(/^\/zh\/character\/deck/, function(){
         });
     };
 
+    var external_deck_builder_init = function(){
+        do_with_all_card(function(){
+            var scards = [];
+            JQ(".dataview .dataview-content .scard").each(function(index, element){
+                scards.push(parseInt(JQ(element).attr("data-id")));
+            });
+            var cards = [];
+            JQ(".dataview .dataview-content .card").each(function(index, element){
+                cards.push({
+                    id: parseInt(JQ(element).attr("data-id")),
+                    num: parseInt(JQ(element).find(".count").text().slice(-1))
+                });
+            });
+
+            var data = JSON.stringify({
+                cards: cards,
+                scards: scards
+            });
+            GM_xmlhttpRequest({
+                method: "POST",
+                url: "http://112.124.105.6/deck",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                data: data,
+                onload: function(response){
+                    var token = JSON.parse(response.responseText).data.token;
+                    JQ(".s-cr2z1 .s-title").append(JQ("<a style='font-size:16px;padding:0 10px;height:20px;color:#8dd2ff;' target='_blank' href='http://112.124.105.6/deck?token=" + token + "'>外部组卡器</a>"));
+                    window.scrollTo(0, 0);
+                }
+            });
+        });
+    };
+
     extra_gear_init();
+    external_deck_builder_init();
 });
 
 // inventory
@@ -143,8 +178,8 @@ var Inventory = new PageHandler(/^\/zh\/character\/inventory/, function(){
         JQ(".s-cr2z1 .s-title").append(JQ("<span style='border-style:solid;border-width:1px;border-color:#497ea0;font-size:16px'><span style='padding:0 10px;height:20px;color:#8dd2ff;cursor:pointer;' id='estiah2-script-inventory-sell-common'>出售所有普通物品</span></span>"));
         JQ("#estiah2-script-inventory-sell-common").click(function(){
             var common_item_list = [];
-            JQ(".s-cr2z1 .s-item .rarity-common").parent().each(function(index){
-                common_item_list.push(JQ(this).attr("data-uid"));
+            JQ(".s-cr2z1 .s-item .rarity-common").parent().each(function(index, element){
+                common_item_list.push(JQ(element).attr("data-uid"));
             });
             var current_index = common_item_list.length - 1;
             var sell_item = function(item_id, callback){

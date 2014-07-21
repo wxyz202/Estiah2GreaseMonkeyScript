@@ -161,7 +161,7 @@ var Deck = new PageHandler(/^\/zh\/character\/deck/, function(){
                 data: data,
                 onload: function(response){
                     var token = JSON.parse(response.responseText).data.token;
-                    JQ(".s-cr2z1 .s-title").append(JQ("<a style='font-size:16px;padding:0 10px;height:20px;color:#8dd2ff;' target='_blank' href='http://112.124.105.6/deck?token=" + token + "'>外部组卡器</a>"));
+                    JQ(".s-cr2z1 .s-title").append(JQ("<a style='border-style:solid;border-width:1px;border-color:#497ea0;font-size:16px;text-decoration:none' target='_blank' href='http://112.124.105.6/deck?token=" + token + "'><span style='padding:0 10px;height:20px;color:#8dd2ff;'>外部组卡器</span></a>"));
                     window.scrollTo(0, 0);
                 }
             });

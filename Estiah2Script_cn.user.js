@@ -6,10 +6,24 @@
 // @include     http://www.estiah2.com/zh/*
 // @version     0.2
 // @grant       GM_xmlhttpRequest
+// @grant       GM_setValue
+// @grant       GM_getValue
 // @require     http://code.jquery.com/jquery-1.11.0.min.js
 // ==/UserScript==
 
 var JQ = jQuery.noConflict();
+
+// global function
+var getCharacterName = function(){
+    JQ(".wf-dashboard .resume .name").text();
+};
+
+var setCharacterValue = function(key, value){
+    GM_setValue(getCharacterName() + ":" + key, value);
+};
+var getCharacterValue = function(key, defaultValue){
+    return GM_getValue(getCharacterName() + ":" + key, defaultValue);
+};
 
 
 var PageHandler = function(pattern, init_func){
@@ -136,6 +150,11 @@ var Deck = new PageHandler(/^\/zh\/character\/deck/, function(){
 
     var external_deck_builder_init = function(){
         do_with_all_card(function(){
+            var add_external_deck_builder_button = function(token){
+                JQ(".s-cr2z1 .s-title").append(JQ("<a style='border-style:solid;border-width:1px;border-color:#497ea0;font-size:16px;text-decoration:none' target='_blank' href='http://112.124.105.6/deck?token=" + token + "'><span style='padding:0 10px;height:20px;color:#8dd2ff;'>外部组卡器</span></a>"));
+                window.scrollTo(0, 0);
+            };
+
             var scards = [];
             JQ(".dataview .dataview-content .scard").each(function(index, element){
                 scards.push(parseInt(JQ(element).attr("data-id")));
@@ -152,19 +171,28 @@ var Deck = new PageHandler(/^\/zh\/character\/deck/, function(){
                 cards: cards,
                 scards: scards
             });
-            GM_xmlhttpRequest({
-                method: "POST",
-                url: "http://112.124.105.6/deck",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                data: data,
-                onload: function(response){
-                    var token = JSON.parse(response.responseText).data.token;
-                    JQ(".s-cr2z1 .s-title").append(JQ("<a style='border-style:solid;border-width:1px;border-color:#497ea0;font-size:16px;text-decoration:none' target='_blank' href='http://112.124.105.6/deck?token=" + token + "'><span style='padding:0 10px;height:20px;color:#8dd2ff;'>外部组卡器</span></a>"));
-                    window.scrollTo(0, 0);
-                }
-            });
+
+            if (getCharacterValue("deck") == data && getCharacterValue("deckExpireTimestamp") > Date.now()){
+                add_external_deck_builder_button(getCharacterValue("deckToken"));
+            } else {
+                GM_xmlhttpRequest({
+                    method: "POST",
+                    url: "http://112.124.105.6/deck",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    data: data,
+                    onload: function(response){
+                        var responseData = JSON.parse(response.responseText).data;
+                        var token = responseData.token;
+                        var expireTimestamp = responseData.expireTimestamp;
+                        setCharacterValue("deck", data);
+                        setCharacterValue("deckToken", token);
+                        setCharacterValue("deckExpireTimestamp", expireTimestamp);
+                        add_external_deck_builder_button(token);
+                    }
+                });
+            }
         });
     };
 

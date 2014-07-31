@@ -2,8 +2,8 @@
 // @name        Estiah2Script_cn
 // @namespace   https://github.com/wxyz202
 // @description the greasemonkey script for estiah2
-// @include     http://cn.estiah2.com/zh/*
-// @include     http://www.estiah2.com/zh/*
+// @include     /^https?://cn\.estiah2\.com/zh/.*/
+// @include     /^https?://www\.estiah2\.com/zh/.*/
 // @version     0.2
 // @grant       GM_xmlhttpRequest
 // @grant       GM_setValue
